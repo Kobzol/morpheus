@@ -46,6 +46,8 @@ PreservedAnalyses MPISubstituteRankPass::run (Module &m, ModuleAnalysisManager &
     }
   }
 
+  // TODO (28.5.19): I do not prone the code just replace constants.
+  //                 -> update the following comment
   // pruning code causes that all analyses are invalidated
   return PreservedAnalyses::none();
 }
