@@ -59,6 +59,16 @@ namespace cn {
                                       [up_rm](const auto &up) { return up.get() == up_rm; });
     }
     unresolved_places_.erase(remove_from_it, unresolved_places_.end());
+
+    for (const auto &up : unresolved_places()) {
+      errs() << "up: " << up->place.name << "\n";
+      errs() << "  - " << up->mpi_rqst << "\n";
+    }
+
+    for (const auto &ut : unresolved_transitions()) {
+      errs() << "ut: " << ut->transition.name << "\n";
+      errs() << "  - " << ut->mpi_rqst << "\n";
+    }
   }
 
   void CommunicationNet::collapse() {
