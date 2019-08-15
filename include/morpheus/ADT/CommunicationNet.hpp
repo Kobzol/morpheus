@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <map>
 #include <memory>
+#include <regex>
 #include <set>
 #include <string>
 #include <sstream>
@@ -113,8 +114,16 @@ struct Edge final : public Printable<Edge> {
   Edge& operator=(const Edge &) = delete;
   Edge& operator=(Edge &&) = default;
 
-  inline EdgeCategory get_category() const { return category; }
-  inline EdgeType     get_type()     const { return type; }
+  inline EdgeCategory get_category() const   { return category; }
+  inline EdgeType     get_type()     const   { return type; }
+
+  bool is_conditional() const {
+    if (!arc_expr.empty()) {
+      cmatch m;
+      return regex_match(arc_expr.c_str(), m, regex("^\r*\\[.*\\]\r*.*"));
+    }
+    return false;
+  }
 
   NetElement &startpoint;
   NetElement &endpoint;

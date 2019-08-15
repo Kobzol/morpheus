@@ -26,15 +26,48 @@ namespace cn {
 
       ostream& format(ostream &os, const Edge &edge) const {
         BasicBlockCN::EdgePredicate<CONTROL_FLOW> is_cf;
+        float penwidth = 1.2;
         string color = "black";
         if (is_cf(edge)) {
+          penwidth = 0.7;
           color = "gray";
+        }
+
+        string shape;
+        switch(edge.get_type()) {
+        case SINGLE_HEADED:
+          shape = "normal";
+          break;
+        case DOUBLE_HEADED:
+          shape = "normalnormal";
+          break;
+        case SINGLE_HEADED_RO:
+          shape = "onormal";
+          break;
+        case DOUBLE_HEADED_RO:
+          shape = "onormalonormal";
+          break;
+        case SHUFFLE:
+          shape = "normaloinvonormal";
+          break;
+        case SHUFFLE_RO:
+          shape = "onormaloinvonormal";
+        }
+
+        string style = "solid";
+        if (edge.is_conditional()) {
+          style = "dashed";
         }
 
         os << edge.startpoint.get_id() << ":box:c"
            << " -> "
            << edge.endpoint.get_id() << ":box:c"
-           << " [label=\"" << edge.arc_expr << "\" color=\"" << color << "\" fontname=\"monospace\"];";
+           << " [label=\"" << edge.arc_expr
+           << "\" style=\"" << style
+           << "\" penwidth=\"" << penwidth
+           << "\" arrowhead=\"" << shape
+           << "\" color=\"" << color
+           << "\" fontname=\"monospace\"];";
 
         return os;
       }
