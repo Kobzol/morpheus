@@ -135,36 +135,18 @@ private:
 
       cn.add_input_edge(initiated_rqst, t_wait, "(reqst, {id=id, buffered=buffered})");
 
-      if (uc.acn) {
-        IncompleteEdge &icn_edge = uc.incomplete_edge;
-        assert (icn_edge.endpoint &&
-                "IncompleteEdge has to be set with non-null endpoint.");
-
-        cn.add_edge(uc.acn->csr,
-                    *icn_edge.endpoint,
-                    "[buffered] {id=id}",
-                    icn_edge.category,
-                    icn_edge.type);
-      }
+      uc.close_connect(cn, &AddressableCN::get_completed_send_request,
+                       "[buffered] {id=id}");
     };
   }
 
   UnresolvedPlace::ResolveFnTy create_collective_resolve_fn_() {
     return [] (CommunicationNet &cn, Place &, Transition &, UnresolvedConnect &uc) {
 
-      if (uc.acn) {
-        IncompleteEdge &icn_edge = uc.incomplete_edge;
-        assert (icn_edge.endpoint &&
-                "IncompleteEdge has to be set with non-null endpoint.");
-
-        cn.add_edge(uc.acn->csr,
-                    *icn_edge.endpoint,
-                    ("take(requests|(_, {id=id}),\\l"
-                     "     size,\\l"
-                     "     msg_tokens)\\l"),
-                    icn_edge.category,
-                    icn_edge.type);
-      }
+      uc.close_connect(cn, &AddressableCN::get_completed_send_request,
+                       ("take(requests|(_, {id=id}),\\l"
+                        "     size,\\l"
+                        "     msg_tokens)\\l"));
     };
   }
 
@@ -270,20 +252,12 @@ private:
                                           Place &initiated_rqst,
                                           Transition &t_wait,
                                           UnresolvedConnect &uc) {
+
       cn.add_input_edge(initiated_rqst, t_wait, "(reqst, {id=id})");
       cn.add_output_edge(t_wait, recv_data, ae_to_recv_data);
 
-      if (uc.acn) {
-        IncompleteEdge &icn_edge = uc.incomplete_edge;
-        assert (icn_edge.endpoint &&
-                "IncompleteEdge has to be set with non-null endpoint.");
-
-        cn.add_edge(uc.acn->crr,
-                    *icn_edge.endpoint,
-                    "{data=data, envelope={id=id}}",
-                    icn_edge.category,
-                    icn_edge.type);
-      }
+      uc.close_connect(cn, &AddressableCN::get_completed_recv_request,
+                       "{data=data, envelope={id=id}}");
     };
   }
 
@@ -294,21 +268,13 @@ private:
                                          Place &,
                                          Transition &t_wait,
                                          UnresolvedConnect &uc) {
+
       cn.add_output_edge(t_wait, recv_data, ae_to_recv_data);
 
-      if (uc.acn) {
-        IncompleteEdge &icn_edge = uc.incomplete_edge;
-        assert (icn_edge.endpoint &&
-                "IncompleteEdge has to be set with non-null endpoint.");
-
-        cn.add_edge(uc.acn->crr,
-                    *icn_edge.endpoint,
-                    ("take(requests|(_, {id=id}) =>* {envelope={id=id}},\\l"
-                     "     size,\\l"
-                     "     msg_tokens)\\l"),
-                    icn_edge.category,
-                    icn_edge.type);
-      }
+      uc.close_connect(cn, &AddressableCN::get_completed_recv_request,
+                       ("take(requests|(_, {id=id}) =>* {envelope={id=id}},\\l"
+                        "     size,\\l"
+                        "     msg_tokens)\\l"));
     };
   }
 

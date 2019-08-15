@@ -178,11 +178,16 @@ struct IncompleteEdge final {
 
 struct UnresolvedConnect final {
 
-  AddressableCN *acn;
+  using AccessCommPlaceFnTy = Place& (AddressableCN::*)();
   IncompleteEdge incomplete_edge;
 
   UnresolvedConnect() { }
-  UnresolvedConnect(AddressableCN *acn) : acn(acn) { }
+  UnresolvedConnect(AddressableCN *acn) : acn_(acn) { }
+
+  void close_connect(CommunicationNet &, AccessCommPlaceFnTy, string);
+
+private:
+  AddressableCN *acn_;
 };
 
 struct UnresolvedPlace final {
@@ -791,6 +796,13 @@ struct AddressableCN final : public CommunicationNet {
     CommunicationNet::clear();
     embedded_cn.clear();
   }
+
+  // NOTE: the accessing methods are present in order to be able
+  //       to access the references via pointer to members
+  Place& get_active_send_request() { return asr; }
+  Place& get_active_recv_request() { return arr; }
+  Place& get_completed_send_request() { return csr; }
+  Place& get_completed_recv_request() { return crr; }
 
   // ---------------------------------------------------------------------------
   // AddressableCN follows the interface of PluginCN in the sense that it has

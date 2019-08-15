@@ -14,6 +14,23 @@ namespace cn {
     return std::to_string(++id);
   }
 
+
+  // ---------------------------------------------------------------------------
+  // UnresolvedConnect
+
+  void UnresolvedConnect::close_connect(CommunicationNet &ctx_cn,
+                                        AccessCommPlaceFnTy get_place,
+                                        string arc_expr) {
+    assert (acn_ != nullptr &&
+            "Trying to close connection with unspecified AddressableCN.");
+    assert (incomplete_edge.endpoint &&
+            "IncompleteEdge has to be set with non-null endpoint.");
+
+    ctx_cn.add_edge((acn_->*get_place)(), *incomplete_edge.endpoint, arc_expr,
+                    incomplete_edge.category, incomplete_edge.type);
+  }
+
+
   // ---------------------------------------------------------------------------
   // CommunicationNet
 
