@@ -75,25 +75,34 @@ namespace cn {
       ostream& format(ostream &os, const Place &place) const {
         string id = place.get_id();
 
+        string cpl_row = "<tr><td></td><td></td><td></td></tr>";
+        if (!place.compound_label.empty()) {
+          cpl_row = (
+            "<tr>"
+            "<td></td>"
+            "<td align=\"left\" valign=\"middle\" fixedsize=\"true\" border=\"1\" bgcolor=\"#e6e6e6\" style=\"rounded\">" + place.compound_label + "</td>"
+            "<td></td>"
+            "</tr>");
+        }
         os << place.get_id()
            << " [shape=plain label=<"
            << "<table border=\"0\">"
             << "<tr>"
              << "<td></td>"
+             << "<td></td>"
+             << "<td></td>"
              << "<td align=\"left\" valign=\"top\" rowspan=\"2\">" << place.init_expr << "</td>"
             << "</tr>"
 
             << "<tr>"
-             << "<td port=\"box\" border=\"1\" cellpadding=\"10\" rowspan=\"2\" style=\"rounded\">"; format(os, static_cast<const NetElement&>(place)); os << "</td>"
+             << "<td port=\"box\" border=\"1\" cellpadding=\"10\" rowspan=\"2\" colspan=\"3\" style=\"rounded\">"; format(os, static_cast<const NetElement&>(place)); os << "</td>"
             << "</tr>"
 
             << "<tr>"
              << "<td align=\"left\" valign=\"bottom\" rowspan=\"2\">" << place.type << "</td>"
             << "</tr>"
 
-            << "<tr>"
-             << "<td></td>"
-            << "</tr>"
+            << cpl_row
            << "</table>"
            << ">];";
 

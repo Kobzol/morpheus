@@ -150,6 +150,7 @@ struct Place final : NetElement {
 
   string type;
   string init_expr;
+  string compound_label;
 };
 
 
@@ -235,8 +236,6 @@ struct UnresolvedTransition final {
 
 // ==========================================================
 // CommunicationNet
-
-struct AddressableCN;
 
 class CommunicationNet : public Identifiable,
                          public Printable<CommunicationNet> {
@@ -783,7 +782,13 @@ struct AddressableCN final : public CommunicationNet {
       crr(add_place("MessageToken", "", "CompletedReceiveRequest")),
       embedded_cn(CommunicationNet()),
       entry_p_(&add_place("Unit", "", "ACN" + std::to_string(address) + "Entry" + get_id())),
-      exit_p_(&add_place("Unit", "", "ACN" + std::to_string(address) + "Exit" + get_id())) { }
+      exit_p_(&add_place("Unit", "", "ACN" + std::to_string(address) + "Exit" + get_id())) {
+
+    asr.compound_label = "ASR";
+    arr.compound_label = "ARR";
+    csr.compound_label = "CSR";
+    crr.compound_label = "CRR";
+  }
 
   AddressableCN(const AddressableCN &) = delete;
   AddressableCN(AddressableCN &&) = default;
